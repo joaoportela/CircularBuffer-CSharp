@@ -7,7 +7,7 @@ namespace CircularBuffer
 	public class CircullarBufferTests
 	{
 		[Test()]
-		public void CircularBuffer_IndexAccess_CorrectContent ()
+		public void CircularBuffer_IndexAccessAndConstructor_CorrectContent ()
 		{
 			var buffer = new CircularBuffer<int> (5, new int[] { 0, 1, 2, 3 });
 
@@ -16,6 +16,18 @@ namespace CircularBuffer
 			for (int i = 0; i < 4; i++) {
 				Assert.That (buffer [i], Is.EqualTo (i));
 			}
+		}
+				
+		[Test()]
+		public void CircularBuffer_Constructor_SkipsElementsWhenSourceIsLargerThanCapacity ()
+		{
+			var buffer = new CircularBuffer<int> (3, new int[] { 0 , 1, 2, 3 });
+
+			Assert.That (buffer.Capacity, Is.EqualTo (3));
+			Assert.That (buffer.Size, Is.EqualTo (3));
+
+			Assert.That (buffer.Front(), Is.EqualTo (1));
+			Assert.That (buffer.Back (), Is.EqualTo (3));
 		}
 
 		[Test()]
@@ -47,4 +59,3 @@ namespace CircularBuffer
 		}
 	}
 }
-
