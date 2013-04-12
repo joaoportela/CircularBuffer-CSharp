@@ -3,12 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircularBuffer", "CircularBuffer\CircularBuffer.csproj", "{FCCF42AE-1500-4AE0-9A5C-40347B86D921}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircularBufferExample", "CircularBufferExample\CircularBufferExample.csproj", "{57E99177-94F0-4715-A91B-6FAE3F6BC37D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{57E99177-94F0-4715-A91B-6FAE3F6BC37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E99177-94F0-4715-A91B-6FAE3F6BC37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E99177-94F0-4715-A91B-6FAE3F6BC37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E99177-94F0-4715-A91B-6FAE3F6BC37D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FCCF42AE-1500-4AE0-9A5C-40347B86D921}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FCCF42AE-1500-4AE0-9A5C-40347B86D921}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCCF42AE-1500-4AE0-9A5C-40347B86D921}.Release|Any CPU.ActiveCfg = Release|Any CPU
