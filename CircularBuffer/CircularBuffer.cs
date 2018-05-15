@@ -122,7 +122,7 @@ namespace CircularBuffer
         public T Back()
         {
             ThrowIfEmpty();
-            return _buffer[(_end != 0 ? _end : _size) - 1];
+            return _buffer[(_end != 0 ? _end : Capacity) - 1];
         }
 
         public T this[int index]

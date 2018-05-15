@@ -247,20 +247,16 @@ namespace CircularBuffer.Tests
         }
 
         [Test]
-        public void CircularBuffer_Back_BugFix()
+        public void CircularBuffer_WithDifferentSizeAndCapacity_BackReturnsLastArrayPosition()
         {
-            // test to confirm this issue does not happen:
+            // test to confirm this issue does not happen anymore:
             // https://github.com/joaoportela/CircullarBuffer-CSharp/issues/2
 
-            var buffer = new CircularBuffer<int>(8, Enumerable.Range(0, 8).ToArray());
+            var buffer = new CircularBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
 
-            for (int i = 0; i < 4; i++)
-            {
-                buffer.PopFront();
-            }
-            buffer.PushBack(8);
+            buffer.PopFront(); // (make size and capacity different)
 
-            Assert.That(buffer.Back(), Is.EqualTo(8));
+            Assert.That(buffer.Back(), Is.EqualTo(4));
         }
     }
 }
