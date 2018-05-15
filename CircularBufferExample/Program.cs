@@ -3,7 +3,7 @@ using CircularBuffer;
 
 namespace CircularBufferExample
 {
-    class MainClass
+    static class MainClass
     {
         public static void Main(string[] args)
         {
@@ -14,8 +14,19 @@ namespace CircularBufferExample
                 buffer.PushBack(i);
             }
 
-            Console.WriteLine(buffer.Front()); // 0
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < buffer.Size; i++)
+            {
+                Console.WriteLine(buffer[i]);
+            }
+
+            Console.WriteLine("---");
+
+            for (int i = 0; i < 3; i++)
+            {
+                buffer.PushBack(10 + i);
+            }
+            
+            for (int i = 0; i < buffer.Size; i++)
             {
                 Console.WriteLine(buffer[i]);
             }
