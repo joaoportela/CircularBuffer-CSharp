@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Linq;
 
 namespace CircularBuffer
 {
+    /// <inheritdoc/>
     /// <summary>
     /// Circular buffer.
     /// 
-    /// When writting to a full buffer:
+    /// When writing to a full buffer:
     /// PushBack -> removes this[0] / Front()
     /// PushFront -> removes this[Size-1] / Back()
     /// 
@@ -18,7 +18,7 @@ namespace CircularBuffer
     /// </summary>
     public class CircularBuffer<T> : IEnumerable<T>
     {
-        private T[] _buffer;
+        private readonly T[] _buffer;
 
         /// <summary>
         /// The _start. Index of the first element in buffer.
@@ -41,7 +41,7 @@ namespace CircularBuffer
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CircularBuffer.CircularBuffer`1"/> class.
+        /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
         /// 
         /// </summary>
         /// <param name='capacity'>
@@ -49,7 +49,7 @@ namespace CircularBuffer
         /// </param>
         /// <param name='items'>
         /// Items to fill buffer with. Items length must be less than capacity.
-        /// Sugestion: use Skip(x).Take(y).ToArray() to build this argument from
+        /// Suggestion: use Skip(x).Take(y).ToArray() to build this argument from
         /// any enumerable.
         /// </param>
         public CircularBuffer(int capacity, T[] items)
@@ -57,16 +57,16 @@ namespace CircularBuffer
             if (capacity < 1)
             {
                 throw new ArgumentException(
-                    "Circular buffer cannot have negative or zero capacity.", "capacity");
+                    "Circular buffer cannot have negative or zero capacity.", nameof(capacity));
             }
             if (items == null)
             {
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
             }
             if (items.Length > capacity)
             {
                 throw new ArgumentException(
-                    "Too many items to fit circular buffer", "items");
+                    "Too many items to fit circular buffer", nameof(items));
             }
 
             _buffer = new T[capacity];
@@ -204,7 +204,7 @@ namespace CircularBuffer
         }
 
         /// <summary>
-        /// Removes the element at the back of the buffer. Decreassing the 
+        /// Removes the element at the back of the buffer. Decreasing the 
         /// Buffer size by 1.
         /// </summary>
         public void PopBack()
@@ -216,7 +216,7 @@ namespace CircularBuffer
         }
 
         /// <summary>
-        /// Removes the element at the front of the buffer. Decreassing the 
+        /// Removes the element at the front of the buffer. Decreasing the 
         /// Buffer size by 1.
         /// </summary>
         public void PopFront()
@@ -228,7 +228,7 @@ namespace CircularBuffer
         }
 
         /// <summary>
-        /// Copies the buffer contents to an array, acording to the logical
+        /// Copies the buffer contents to an array, according to the logical
         /// contents of the buffer (i.e. independent of the internal 
         /// order/contents)
         /// </summary>
