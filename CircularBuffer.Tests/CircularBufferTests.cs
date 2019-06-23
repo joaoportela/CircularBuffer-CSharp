@@ -8,6 +8,13 @@ namespace CircularBuffer.Tests
     public class CircularBufferTests
     {
         [Test]
+        public void CircularBuffer_GetEnumeratorConstructorCapacity_ReturnsEmptyCollection()
+        {
+            var buffer = new CircularBuffer<string>(5);
+            CollectionAssert.IsEmpty(buffer.ToArray());
+        }
+
+        [Test]
         public void CircularBuffer_ConstructorSizeIndexAccess_CorrectContent()
         {
             var buffer = new CircularBuffer<int>(5, new[] { 0, 1, 2, 3 });

@@ -326,7 +326,11 @@ namespace CircularBuffer
 
         private ArraySegment<T> ArrayOne()
         {
-            if (_start < _end)
+            if (IsEmpty)
+            {
+                return new ArraySegment<T>(new T[0]);
+            }
+            else if (_start < _end)
             {
                 return new ArraySegment<T>(_buffer, _start, _end - _start);
             }
@@ -338,7 +342,11 @@ namespace CircularBuffer
 
         private ArraySegment<T> ArrayTwo()
         {
-            if (_start < _end)
+            if (IsEmpty)
+            {
+                return new ArraySegment<T>(new T[0]);
+            }
+            else if (_start < _end)
             {
                 return new ArraySegment<T>(_buffer, _end, 0);
             }
