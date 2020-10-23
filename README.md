@@ -14,13 +14,3 @@ This means that you have predefined memory usage. Push and Pop operations
 are always O(1). Index access is also O(1).
 
 More info @ wikipedia: http://en.wikipedia.org/wiki/Circular_buffer
-
-
-License:
- ----------------------------------------------------------------------------
- "THE BEER-WARE LICENSE" (Revision 42):
- Joao Portela wrote this file. As long as you retain this notice you
- can do whatever you want with this stuff. If we meet some day, and you think
- this stuff is worth it, you can buy me a beer in return.
- Joao Portela
- ----------------------------------------------------------------------------
