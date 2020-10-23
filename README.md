@@ -8,8 +8,9 @@ the CircularBuffer.cs file to your project and use it.
 
 ## What is a circular buffer? 
 
-"A circular buffer, cyclic buffer or ring buffer is a data structure 
-that uses a single, fixed-size buffer as if it were connected end-to-end."
+> A circular buffer, cyclic buffer or ring buffer is a data structure 
+that uses a single, fixed-size buffer as if it were connected end-to-end.
+
 This means that you have predefined memory usage. Push and Pop operations 
 are always O(1). Index access is also O(1).
 
