@@ -1,0 +1,24 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*' # Publish on any new tag starting with v
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        dotnet: [3.1]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet }}
+    - name: Create nuget package
+      run: dotnet pack -c Release
