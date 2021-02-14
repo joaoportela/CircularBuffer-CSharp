@@ -25,18 +25,23 @@ jobs:
     - name: Create nuget package
       run: dotnet pack CircularBuffer/CircularBuffer.csproj -c Release /p:Version=${{ env.RELEASE_VERSION }}
 
-    - name: nupkg artifact path
+    - name: artifacts paths
       run: |
-        ARTIFACT_PATHNAME=$(ls CircularBuffer/bin/Release/*.nupkg | head -n 1)
-        ARTIFACT_NAME=$(basename $ARTIFACT_PATHNAME)
-        echo "ARTIFACT_NAME=${ARTIFACT_NAME}" >> $GITHUB_ENV
-        echo "ARTIFACT_PATHNAME=${ARTIFACT_PATHNAME}" >> $GITHUB_ENV
+        ARTIFACT_NUPKG_PATHNAME=$(ls CircularBuffer/bin/Release/*.nupkg | head -n 1)
+        ARTIFACT_NUPKG_NAME=$(basename $ARTIFACT_NUPKG_PATHNAME)
+        ARTIFACT_DLL_PATHNAME=$(ls CircularBuffer/bin/Release/**/*.dll | head -n 1)
+        ARTIFACT_DLL_NAME=$(basename $ARTIFACT_DLL_PATHNAME)
+
+        echo "ARTIFACT_NUPKG_PATHNAME=${ARTIFACT_NUPKG_PATHNAME}" >> $GITHUB_ENV
+        echo "ARTIFACT_NUPKG_NAME=${ARTIFACT_NUPKG_NAME}" >> $GITHUB_ENV
+        echo "ARTIFACT_DLL_PATHNAME=${ARTIFACT_DLL_PATHNAME}" >> $GITHUB_ENV
+        echo "ARTIFACT_DLL_NAME=${ARTIFACT_DLL_NAME}" >> $GITHUB_ENV
 
     - name: nuget push
       run: dotnet nuget push "${NUPKG_PATH}" --api-key "${NUGET_KEY}" --source https://api.nuget.org/v3/index.json
       env:
         NUGET_KEY: ${{ secrets.NUGET_KEY }}
-        NUPKG_PATH: ${{ env.ARTIFACT_PATHNAME }}
+        NUPKG_PATH: ${{ env.ARTIFACT_NUPKG_PATHNAME }}
 
     - name: Create Release
       id: create_release
@@ -48,13 +53,23 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
-    - name: Upload Release Asset
-      id: upload-release-asset 
+    - name: Upload Release Asset nupkg
+      id: upload-release-asset-nupkg
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ env.ARTIFACT_PATHNAME }}
-        asset_name: ${{ env.ARTIFACT_NAME }}
+        asset_path: ${{ env.ARTIFACT_NUPKG_PATHNAME }}
+        asset_name: ${{ env.ARTIFACT_NUPKG_NAME }}
+        asset_content_type: application/octet-stream
+    - name: Upload Release Asset dll
+      id: upload-release-asset-dll
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ env.ARTIFACT_DLL_PATHNAME }}
+        asset_name: ${{ env.ARTIFACT_DLL_NAME }}
         asset_content_type: application/octet-stream
