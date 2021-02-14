@@ -1,6 +1,6 @@
 # Circular Buffer
 
-![Build Status](https://github.com/joaoportela/CircullarBuffer-CSharp/workflows/.NET%20Core/badge.svg)
+![Build Status](https://github.com/joaoportela/CircullarBuffer-CSharp/workflows/Build%20%26%20Test/badge.svg)
 [![nuget](https://img.shields.io/nuget/v/CircularBuffer)](https://www.nuget.org/packages/CircularBuffer/)
 
 Simple implementation of a circular buffer in C#.
