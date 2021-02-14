@@ -2,6 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RepositoryUrl>https://github.com/joaoportela/CircularBuffer-CSharp</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/joaoportela/CircularBuffer-CSharp</PackageProjectUrl>
+    <PackageTags>ringbuffer circularbuffer</PackageTags>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
+    <Description>Simple implementation of a circular buffer in C#</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" PackagePath="LICENSE" />
+  </ItemGroup>
+
+  <ItemGroup> 
+    <None Include="..\doc\logo.png">
+      <Pack>true</Pack>
+      <Visible>false</Visible>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
