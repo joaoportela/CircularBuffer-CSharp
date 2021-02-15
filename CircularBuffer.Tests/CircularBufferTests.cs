@@ -257,7 +257,7 @@ namespace CircularBuffer.Tests
         public void CircularBuffer_WithDifferentSizeAndCapacity_BackReturnsLastArrayPosition()
         {
             // test to confirm this issue does not happen anymore:
-            // https://github.com/joaoportela/CircullarBuffer-CSharp/issues/2
+            // https://github.com/joaoportela/CircularBuffer-CSharp/issues/2
 
             var buffer = new CircularBuffer<int>(5, new[] { 0, 1, 2, 3, 4 });
 
