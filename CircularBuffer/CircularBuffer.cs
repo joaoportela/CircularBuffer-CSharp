@@ -35,6 +35,13 @@ namespace CircularBuffer
         /// </summary>
         private int _size;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
+        /// 
+        /// </summary>
+        /// <param name='capacity'>
+        /// Buffer capacity. Must be positive.
+        /// </param>
         public CircularBuffer(int capacity)
             : this(capacity, new T[] { })
         {
@@ -84,6 +91,12 @@ namespace CircularBuffer
         /// </summary>
         public int Capacity { get { return _buffer.Length; } }
 
+        /// <summary>
+        /// Boolean indicating if Circular is at full capacity.
+        /// Adding more elements when the buffer is full will
+        /// cause elements to be removed from the other end
+        /// of the buffer.
+        /// </summary>
         public bool IsFull
         {
             get
@@ -92,6 +105,9 @@ namespace CircularBuffer
             }
         }
 
+        /// <summary>
+        /// True if has no elements.
+        /// </summary>
         public bool IsEmpty
         {
             get
@@ -125,6 +141,13 @@ namespace CircularBuffer
             return _buffer[(_end != 0 ? _end : Capacity) - 1];
         }
 
+        /// <summary>
+        /// Index access to elements in buffer.
+        /// Index does not loop around like when adding elements,
+        /// valid interval is [0;Size[
+        /// </summary>
+        /// <param name="index">Index of element to access.</param>
+        /// <exception cref="IndexOutOfRangeException">Thrown when index is outside of [; Size[ interval.</exception>
         public T this[int index]
         {
             get
@@ -247,6 +270,10 @@ namespace CircularBuffer
         }
 
         #region IEnumerable<T> implementation
+        /// <summary>
+        /// Returns an enumerator that iterates through this buffer.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate this collection.</returns>
         public IEnumerator<T> GetEnumerator()
         {
             var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
