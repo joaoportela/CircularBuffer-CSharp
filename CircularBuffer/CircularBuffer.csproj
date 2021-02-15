@@ -4,11 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/joaoportela/CircularBuffer-CSharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/joaoportela/CircularBuffer-CSharp</PackageProjectUrl>
     <PackageTags>ringbuffer circularbuffer</PackageTags>
     <PackageIcon>logo.png</PackageIcon>
     <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
     <Description>Simple implementation of a circular buffer in C#</Description>
+    <Authors>João Portela</Authors>
   </PropertyGroup>
 
   <ItemGroup>
