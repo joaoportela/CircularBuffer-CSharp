@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        dotnet: [5.0.100]
+        dotnet: [5.0.x]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -21,9 +21,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ matrix.dotnet }}
-    - name: Clear local NuGet cache (workaround for failed restores on windows-latest)
-      run: dotnet clean --configuration Release && dotnet nuget locals all --clear
+    - name: Restore dependencies
+      run: dotnet restore
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release --no-restore
     - name: Run unit tests
-      run: dotnet test
+      run: dotnet test --no-build --verbosity normal
