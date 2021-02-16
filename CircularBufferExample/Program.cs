@@ -1,5 +1,5 @@
-﻿using System;
-using CircularBuffer;
+﻿using CircularBuffer;
+using System;
 
 namespace CircularBufferExample
 {
