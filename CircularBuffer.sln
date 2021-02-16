@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircularBuffer.Tests", "Cir
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircularBuffer", "CircularBuffer\CircularBuffer.csproj", "{EAC0B136-8E7D-4061-B489-52017695B9F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircularBufferExample", "CircularBufferExample\CircularBufferExample.csproj", "{E8B5C6C7-CD87-4417-8A91-41D94F8069E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CircularBuffer.Example", "CircularBuffer.Example\CircularBuffer.Example.csproj", "{E8B5C6C7-CD87-4417-8A91-41D94F8069E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
