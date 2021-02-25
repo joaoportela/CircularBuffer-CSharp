@@ -27,10 +27,12 @@ jobs:
     - name: Create nuget package
       run: dotnet pack CircularBuffer/CircularBuffer.csproj -c Release /p:Version=${{ env.RELEASE_VERSION }}
 
-    - name: artifacts paths
+    - name: prepare artifacts
       run: |
         ARTIFACT_NUPKG_PATHNAME=$(ls CircularBuffer/bin/Release/*.nupkg | head -n 1)
         echo "ARTIFACT_NUPKG_PATHNAME=${ARTIFACT_NUPKG_PATHNAME}" >> $GITHUB_ENV
+        cd CircularBuffer/bin/Release/
+        ls */*.dll | xargs -I _FILE_ bash -c "cp _FILE_ \$(echo _FILE_ | sed 's/\//_/g')"
 
     - name: nuget push
       run: dotnet nuget push "${NUPKG_PATH}" --api-key "${NUGET_KEY}" --source https://api.nuget.org/v3/index.json
@@ -43,7 +45,7 @@ jobs:
       with:
           files: |
             CircularBuffer/bin/Release/*.nupkg
-            CircularBuffer/bin/Release/**/*.dll
+            CircularBuffer/bin/Release/*.dll
           draft: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
