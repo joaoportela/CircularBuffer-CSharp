@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace CircularBuffer.Tests
 {
@@ -114,6 +115,32 @@ namespace CircularBuffer.Tests
             }
 
             Assert.That(buffer.ToArray(), Is.EqualTo(new[] { 5, 6, 7, 8, 9 }));
+        }
+
+        [Test]
+        public void CircularBuffer_ToArraySegmentsConstructorDefinedArray_CorrectContent()
+        {
+            var buffer = new CircularBuffer<int>(5, new[] { 0, 1, 2, 3 });
+
+            var arraySegments = buffer.ToArraySegments();
+
+            Assert.That(arraySegments.Count, Is.EqualTo(2)); // length of 2 is part of the contract.
+            Assert.That(arraySegments.SelectMany(x => x), Is.EqualTo(new[] { 0, 1, 2, 3 }));
+        }
+
+        [Test]
+        public void CircularBuffer_ToArraySegmentsOverflowedBuffer_CorrectContent()
+        {
+            var buffer = new CircularBuffer<int>(5);
+
+            for (int i = 0; i < 10; i++)
+            {
+                buffer.PushBack(i);
+            }
+
+            var arraySegments = buffer.ToArraySegments();
+            Assert.That(arraySegments.Count, Is.EqualTo(2)); // length of 2 is part of the contract.
+            Assert.That(arraySegments.SelectMany(x => x), Is.EqualTo(new[] { 5, 6, 7, 8, 9 }));
         }
 
         [Test]

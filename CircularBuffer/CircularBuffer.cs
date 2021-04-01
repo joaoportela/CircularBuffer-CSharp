@@ -260,13 +260,30 @@ namespace CircularBuffer
         {
             T[] newArray = new T[Size];
             int newArrayOffset = 0;
-            var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
+            var segments = ToArraySegments();
             foreach (ArraySegment<T> segment in segments)
             {
                 Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
                 newArrayOffset += segment.Count;
             }
             return newArray;
+        }
+
+        /// <summary>
+        /// Get the contents of the buffer as 2 ArraySegments.
+        /// Respects the logical contents of the buffer, where
+        /// each segment and items in each segment are ordered
+        /// according to insertion.
+        ///
+        /// Fast: does not copy the array elements.
+        /// Useful for methods like <c>Send(IList&lt;ArraySegment&lt;Byte&gt;&gt;)</c>.
+        /// 
+        /// <remarks>Segments may be empty.</remarks>
+        /// </summary>
+        /// <returns>An IList with 2 segments corresponding to the buffer content.</returns>
+        public IList<ArraySegment<T>> ToArraySegments()
+        {
+            return new [] { ArrayOne(), ArrayTwo() };
         }
 
         #region IEnumerable<T> implementation
@@ -276,7 +293,7 @@ namespace CircularBuffer
         /// <returns>An enumerator that can be used to iterate this collection.</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            var segments = new ArraySegment<T>[2] { ArrayOne(), ArrayTwo() };
+            var segments = ToArraySegments();
             foreach (ArraySegment<T> segment in segments)
             {
                 for (int i = 0; i < segment.Count; i++)
