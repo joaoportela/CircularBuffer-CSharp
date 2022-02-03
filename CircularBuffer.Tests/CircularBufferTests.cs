@@ -291,5 +291,35 @@ namespace CircularBuffer.Tests
 
             Assert.That(buffer.Back(), Is.EqualTo(4));
         }
+
+        [Test]
+        public void CircularBuffer_Clear_ClearsContent()
+        {
+            var buffer = new CircularBuffer<int>(5, new[] { 4, 3, 2, 1, 0 });
+
+            buffer.Clear();
+
+            Assert.That(buffer.Size, Is.EqualTo(0));
+            Assert.That(buffer.Capacity, Is.EqualTo(5));
+            Assert.That(buffer.ToArray(), Is.EqualTo(new int[0]));
+        }
+
+        [Test]
+        public void CircularBuffer_Clear_WorksNormallyAfterClear()
+        {
+            var buffer = new CircularBuffer<int>(5, new[] { 4, 3, 2, 1, 0 });
+
+            buffer.Clear();
+            for (int i = 0; i < 5; i++)
+            {
+                buffer.PushBack(i);
+            }
+
+            Assert.That(buffer.Front(), Is.EqualTo(0));
+            for (int i = 0; i < 5; i++)
+            {
+                Assert.That(buffer[i], Is.EqualTo(i));
+            }
+        }
     }
 }

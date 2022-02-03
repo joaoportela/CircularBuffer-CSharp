@@ -35,14 +35,15 @@ namespace CircularBuffer.Example
             }
             Console.WriteLine("\nbuffer.PushFront() {2,1,0} respectively:");
             PrintBuffer(buffer);
+
+            buffer.Clear();
+            Console.WriteLine("\nbuffer.Clear():");
+            PrintBuffer(buffer);
         }
 
         private static void PrintBuffer(CircularBuffer<int> buffer)
         {
-            for (int i = 0; i < buffer.Size; i++)
-            {
-                Console.WriteLine($"buffer[{i}] = {buffer[i]}");
-            }
+            Console.WriteLine($"{{{String.Join(",", buffer.ToArray())}}}");
         }
     }
 }

@@ -251,6 +251,19 @@ namespace CircularBuffer
         }
 
         /// <summary>
+        /// Clears the contents of the array. Size = 0, Capacity is unchanged.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public void Clear()
+        {
+            // to clear we just reset everything.
+            _start = 0;
+            _end = 0;
+            _size = 0;
+            Array.Clear(_buffer, 0, _buffer.Length);
+        }
+
+        /// <summary>
         /// Copies the buffer contents to an array, according to the logical
         /// contents of the buffer (i.e. independent of the internal 
         /// order/contents)
