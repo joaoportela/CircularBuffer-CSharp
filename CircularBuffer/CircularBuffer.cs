@@ -26,7 +26,7 @@ namespace CircularBuffer
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
-        /// 
+        ///
         /// </summary>
         /// <param name='capacity'>
         /// Buffer capacity. Must be positive.
@@ -38,7 +38,7 @@ namespace CircularBuffer
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
-        /// 
+        ///
         /// </summary>
         /// <param name='capacity'>
         /// Buffer capacity. Must be positive.
@@ -82,7 +82,7 @@ namespace CircularBuffer
         {
             get
             {
-                return Size == Capacity;
+                return Count == Capacity;
             }
         }
 
@@ -91,24 +91,34 @@ namespace CircularBuffer
         {
             get
             {
-                return Size == 0;
+                return Count == 0;
             }
         }
 
         /// <inheritdoc/>
-        public int Size { get { return _size; } }
-
-        int IReadOnlyCollection<T>.Count => Size;
+        [Obsolete("Use Count property instead")]
+        public int Size => Count;
 
         /// <inheritdoc/>
-        public T Front()
+        public int Count { get { return _size; } }
+
+        /// <inheritdoc/>
+        [Obsolete("Use First() method instead")]
+        public T Front() => First();
+
+        /// <inheritdoc/>
+        [Obsolete("Use Last() method instead")]
+        public T Back() => Last();
+
+        /// <inheritdoc/>
+        public T First()
         {
             ThrowIfEmpty();
             return _buffer[_start];
         }
 
         /// <inheritdoc/>
-        public T Back()
+        public T Last()
         {
             ThrowIfEmpty();
             return _buffer[(_end != 0 ? _end : Capacity) - 1];
@@ -210,16 +220,79 @@ namespace CircularBuffer
         /// <inheritdoc/>
         public T[] ToArray()
         {
-            T[] newArray = new T[Size];
-            int newArrayOffset = 0;
-            var segments = ToArraySegments();
-            foreach (ArraySegment<T> segment in segments)
-            {
-                Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
-                newArrayOffset += segment.Count;
-            }
+            T[] newArray = new T[Count];
+            CopyToInternal(newArray, 0);
             return newArray;
         }
+
+        /// <inheritdoc/>
+        public void CopyTo(T[] array)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+
+            if (array.Length < _size)
+                throw new ArgumentException($"The number of elements in the source {nameof(CircularBuffer)} is greater than the available " +
+                "number of elements of the destination array.", nameof(array));
+
+            CopyToInternal(array, 0);
+        }
+
+        /// <inheritdoc/>
+        public void CopyTo(T[] array, int index)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), $"{nameof(index)} is less than the lower bound of {nameof(array)}.");
+
+            if (array.Length - index < _size)
+                throw new ArgumentException($"The number of elements in the source {nameof(CircularBuffer)} is greater than the available " +
+                "number of elements from index to the end of the destination array.", nameof(array));
+
+            CopyToInternal(array, index);
+        }
+
+        /// <inheritdoc/>
+        public void CopyTo(T[] array, long index)
+        {
+            if (array is null)
+                throw new ArgumentNullException(nameof(array));
+
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), $"{nameof(index)} is less than the lower bound of {nameof(array)}.");
+
+            if (array.LongLength - index < _size)
+                throw new ArgumentException($"The number of elements in the source {nameof(CircularBuffer)} is greater than the available " +
+                "number of elements from index to the end of the destination array.", nameof(array));
+
+            CopyToInternal(array, index);
+        }
+
+#if (NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER)
+
+        /// <inheritdoc/>
+        public void CopyTo(Memory<T> memory)
+        {
+            if (memory.Length < _size)
+                throw new ArgumentException($"The number of elements in the source {nameof(CircularBuffer)} is greater than the available " +
+                "number of elements of the destination Memory.", nameof(memory));
+
+            CopyToInternal(memory);
+        }
+
+        /// <inheritdoc/>
+        public void CopyTo(Span<T> span)
+        {
+            if (span.Length < _size)
+                throw new ArgumentException($"The number of elements in the source {nameof(CircularBuffer)} is greater than the available " +
+                "number of elements of the destination Span.", nameof(span));
+
+            CopyToInternal(span);
+        }
+
+#endif
 
         /// <inheritdoc/>
         public IList<ArraySegment<T>> ToArraySegments()
@@ -227,7 +300,24 @@ namespace CircularBuffer
             return new[] { ArrayOne(), ArrayTwo() };
         }
 
+#if (NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER)
+
+        /// <inheritdoc/>
+        public SpanTuple<T> ToSpan()
+        {
+            return new SpanTuple<T>(SpanOne(), SpanTwo());
+        }
+
+        /// <inheritdoc/>
+        public (ReadOnlyMemory<T> A, ReadOnlyMemory<T> B) ToMemory()
+        {
+            return (MemoryOne(), MemoryTwo());
+        }
+
+#endif
+
         #region IEnumerable<T> implementation
+
         /// <summary>
         /// Returns an enumerator that iterates through this buffer.
         /// </summary>
@@ -243,13 +333,60 @@ namespace CircularBuffer
                 }
             }
         }
+
         #endregion
+
         #region IEnumerable implementation
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return (IEnumerator)GetEnumerator();
         }
+
         #endregion
+
+#if (NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER)
+
+        private void CopyToInternal(T[] array, int index)
+        {
+            CopyToInternal(array.AsSpan(index));
+        }
+
+        private void CopyToInternal(Memory<T> memory)
+        {
+            CopyToInternal(memory.Span);
+        }
+
+        private void CopyToInternal(Span<T> span)
+        {
+            var segments = ToSpan();
+            segments.A.CopyTo(span);
+            segments.B.CopyTo(span.Slice(segments.A.Length));
+        }
+
+#else
+
+        private void CopyToInternal(T[] array, int index)
+        {
+            var segments = ToArraySegments();
+            var segment = segments[0];
+            Array.Copy(segment.Array, segment.Offset, array, index, segment.Count);
+            index += segment.Count;
+            segment = segments[1];
+            Array.Copy(segment.Array, segment.Offset, array, index, segment.Count);
+        }
+
+#endif
+
+        private void CopyToInternal(T[] array, long index)
+        {
+            var segments = ToArraySegments();
+            var segment = segments[0];
+            Array.Copy(segment.Array, segment.Offset, array, index, segment.Count);
+            index += segment.Count;
+            segment = segments[1];
+            Array.Copy(segment.Array, segment.Offset, array, index, segment.Count);
+        }
 
         private void ThrowIfEmpty(string message = "Cannot access an empty buffer.")
         {
@@ -340,6 +477,76 @@ namespace CircularBuffer
                 return new ArraySegment<T>(_buffer, 0, _end);
             }
         }
+
+#if (NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER)
+
+        private Span<T> SpanOne()
+        {
+            if (IsEmpty)
+            {
+                return Span<T>.Empty;
+            }
+            else if (_start < _end)
+            {
+                return _buffer.AsSpan(_start, _end - _start);
+            }
+            else
+            {
+                return _buffer.AsSpan(_start, _buffer.Length - _start);
+            }
+        }
+
+        private Span<T> SpanTwo()
+        {
+            if (IsEmpty)
+            {
+                return Span<T>.Empty;
+            }
+            else if (_start < _end)
+            {
+                return _buffer.AsSpan(_end, 0);
+            }
+            else
+            {
+                return _buffer.AsSpan(0, _end);
+            }
+        }
+
+        private Memory<T> MemoryOne()
+        {
+            if (IsEmpty)
+            {
+                return Memory<T>.Empty;
+            }
+            else if (_start < _end)
+            {
+                return _buffer.AsMemory(_start, _end - _start);
+            }
+            else
+            {
+                return _buffer.AsMemory(_start, _buffer.Length - _start);
+            }
+        }
+
+        private Memory<T> MemoryTwo()
+        {
+            if (IsEmpty)
+            {
+                return Memory<T>.Empty;
+            }
+            else if (_start < _end)
+            {
+                return _buffer.AsMemory(_end, 0);
+            }
+            else
+            {
+                return _buffer.AsMemory(0, _end);
+            }
+        }
+
+#endif
+
         #endregion
+
     }
 }

@@ -47,19 +47,34 @@ namespace CircularBuffer
         /// <summary>
         /// Current buffer size (the number of elements that the buffer has).
         /// </summary>
+        [Obsolete("Use Count property instead")]
         int Size { get; }
 
         /// <summary>
         /// Element at the back of the buffer - this[Size - 1].
         /// </summary>
         /// <returns>The value of the element of type T at the back of the buffer.</returns>
+        [Obsolete("Use Last() method instead")]
         T Back();
 
         /// <summary>
         /// Element at the front of the buffer - this[0].
         /// </summary>
         /// <returns>The value of the element of type T at the front of the buffer.</returns>
+        [Obsolete("Use First() method instead")]
         T Front();
+
+        /// <summary>
+        /// Element at the back of the buffer - this[Size - 1].
+        /// </summary>
+        /// <returns>The value of the element of type T at the back of the buffer.</returns>
+        T First();
+
+        /// <summary>
+        /// Element at the front of the buffer - this[0].
+        /// </summary>
+        /// <returns>The value of the element of type T at the front of the buffer.</returns>
+        T Last();
 
         /// <summary>
         /// Clears the contents of the array. Size = 0, Capacity is unchanged.
@@ -101,11 +116,57 @@ namespace CircularBuffer
 
         /// <summary>
         /// Copies the buffer contents to an array, according to the logical
-        /// contents of the buffer (i.e. independent of the internal 
+        /// contents of the buffer (i.e. independent of the internal
         /// order/contents)
         /// </summary>
         /// <returns>A new array with a copy of the buffer contents.</returns>
         T[] ToArray();
+
+        /// <summary>
+        /// Copies the buffer contents to the array, according to the logical
+        /// contents of the buffer (i.e. independent of the internal
+        /// order/contents)
+        /// </summary>
+        /// <param name="array">The array that is the destination of the elements copied from the current buffer.</param>
+        void CopyTo(T[] array);
+
+        /// <summary>
+        /// Copies the buffer contents to the array, according to the logical
+        /// contents of the buffer (i.e. independent of the internal
+        /// order/contents)
+        /// </summary>
+        /// <param name="array">The array that is the destination of the elements copied from the current buffer.</param>
+        /// <param name="index">A 32-bit integer that represents the index in array at which copying begins.</param>
+        void CopyTo(T[] array, int index);
+
+        /// <summary>
+        /// Copies the buffer contents to the array, according to the logical
+        /// contents of the buffer (i.e. independent of the internal
+        /// order/contents)
+        /// </summary>
+        /// <param name="array">The array that is the destination of the elements copied from the current buffer.</param>
+        /// <param name="index">A 64-bit integer that represents the index in array at which copying begins.</param>
+        void CopyTo(T[] array, long index);
+
+#if (NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER)
+
+        /// <summary>
+        /// Copies the buffer contents to the <see cref="Memory&lt;T&gt;"/>, according to the logical
+        /// contents of the buffer (i.e. independent of the internal
+        /// order/contents)
+        /// </summary>
+        /// <param name="memory">The memory that is the destination of the elements copied from the current buffer.</param>
+        void CopyTo(Memory<T> memory);
+
+        /// <summary>
+        /// Copies the buffer contents to the <see cref="Span&lt;T&gt;"/>, according to the logical
+        /// contents of the buffer (i.e. independent of the internal
+        /// order/contents)
+        /// </summary>
+        /// <param name="span">The span that is the destination of the elements copied from the current buffer.</param>
+        void CopyTo(Span<T> span);
+
+#endif
 
         /// <summary>
         /// Get the contents of the buffer as 2 ArraySegments.
@@ -120,5 +181,31 @@ namespace CircularBuffer
         /// </summary>
         /// <returns>An IList with 2 segments corresponding to the buffer content.</returns>
         IList<ArraySegment<T>> ToArraySegments();
+
+#if (NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER)
+
+        /// <summary>
+        /// Get the contents of the buffer as ref struct with 2 read only spans (<see cref="SpanTuple&lt;T&gt;"/>).
+        /// Respects the logical contents of the buffer, where
+        /// each segment and items in each segment are ordered
+        /// according to insertion.
+        ///
+        /// <remarks>Segments may be empty.</remarks>
+        /// </summary>
+        /// <returns>A <see cref="SpanTuple&lt;T&gt;"/> with 2 read only spans corresponding to the buffer content.</returns>
+        SpanTuple<T> ToSpan();
+
+        /// <summary>
+        /// Get the contents of the buffer as tuple with 2 <see cref="ReadOnlyMemory&lt;T&gt;"/>.
+        /// Respects the logical contents of the buffer, where
+        /// each segment and items in each segment are ordered
+        /// according to insertion.
+        ///
+        /// <remarks>Segments may be empty.</remarks>
+        /// </summary>
+        /// <returns>A tuple with 2 read only spans corresponding to the buffer content.</returns>
+        (ReadOnlyMemory<T> A, ReadOnlyMemory<T> B) ToMemory();
+
+#endif
     }
 }
