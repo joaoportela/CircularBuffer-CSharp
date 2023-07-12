@@ -16,7 +16,7 @@ namespace CircularBuffer
     /// http://www.boost.org/doc/libs/1_53_0/libs/circular_buffer/doc/circular_buffer.html
     /// because I liked their interface.
     /// </summary>
-    public class CircularBuffer<T> : IEnumerable<T>
+    public class CircularBuffer<T> : IReadOnlyCollection<T>
     {
         private readonly T[] _buffer;
 
@@ -120,6 +120,8 @@ namespace CircularBuffer
         /// Current buffer size (the number of elements that the buffer has).
         /// </summary>
         public int Size { get { return _size; } }
+
+        int IReadOnlyCollection<T>.Count => Size;
 
         /// <summary>
         /// Element at the front of the buffer - this[0].
