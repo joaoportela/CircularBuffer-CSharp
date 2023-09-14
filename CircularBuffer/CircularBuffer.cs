@@ -34,7 +34,10 @@ namespace CircularBuffer
         /// The _size. Buffer size.
         /// </summary>
         private int _size;
-
+        /// <summary>
+        /// The lock object for multi-thread safety.
+        /// </summary>
+        Object _lock = new object();
         /// <summary>
         /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
         /// 
@@ -188,17 +191,20 @@ namespace CircularBuffer
         /// <param name="item">Item to push to the back of the buffer</param>
         public void PushBack(T item)
         {
-            if (IsFull)
+            lock (_lock)
             {
-                _buffer[_end] = item;
-                Increment(ref _end);
-                _start = _end;
-            }
-            else
-            {
-                _buffer[_end] = item;
-                Increment(ref _end);
-                ++_size;
+                if (IsFull)
+                {
+                    _buffer[_end] = item;
+                    Increment(ref _end);
+                    _start = _end;
+                }
+                else
+                {
+                    _buffer[_end] = item;
+                    Increment(ref _end);
+                    ++_size;
+                }
             }
         }
 
@@ -212,55 +218,97 @@ namespace CircularBuffer
         /// <param name="item">Item to push to the front of the buffer</param>
         public void PushFront(T item)
         {
-            if (IsFull)
+            lock (_lock)
             {
-                Decrement(ref _start);
-                _end = _start;
-                _buffer[_start] = item;
-            }
-            else
-            {
-                Decrement(ref _start);
-                _buffer[_start] = item;
-                ++_size;
+                if (IsFull)
+                {
+                    Decrement(ref _start);
+                    _end = _start;
+                    _buffer[_start] = item;
+                }
+                else
+                {
+                    Decrement(ref _start);
+                    _buffer[_start] = item;
+                    ++_size;
+                }
             }
         }
 
+        /// <summary>
+        /// Returns the element at the back of the buffer, then removes it. Decreasing the 
+        /// Buffer size by 1.
+        /// </summary>
+        public T PopBackItem()
+        {
+            lock (_lock)
+            {
+                ThrowIfEmpty("Cannot take elements from an empty buffer.");
+                T item = _buffer[(_end != 0 ? _end : Capacity) - 1];
+                Decrement(ref _end);
+                _buffer[_end] = default(T);
+                --_size;
+                return item;
+            }
+        }
         /// <summary>
         /// Removes the element at the back of the buffer. Decreasing the 
         /// Buffer size by 1.
         /// </summary>
         public void PopBack()
         {
-            ThrowIfEmpty("Cannot take elements from an empty buffer.");
-            Decrement(ref _end);
-            _buffer[_end] = default(T);
-            --_size;
+            lock (_lock)
+            {
+                ThrowIfEmpty("Cannot take elements from an empty buffer.");
+                Decrement(ref _end);
+                _buffer[_end] = default(T);
+                --_size;
+            }
         }
-
         /// <summary>
         /// Removes the element at the front of the buffer. Decreasing the 
         /// Buffer size by 1.
         /// </summary>
         public void PopFront()
         {
-            ThrowIfEmpty("Cannot take elements from an empty buffer.");
-            _buffer[_start] = default(T);
-            Increment(ref _start);
-            --_size;
+            lock (_lock)
+            {
+                ThrowIfEmpty("Cannot take elements from an empty buffer.");
+                _buffer[_start] = default(T);
+                Increment(ref _start);
+                --_size;
+            }
         }
-
+        /// <summary>
+        /// Returns the element at the front of the buffer, then removes it. Decreasing the 
+        /// Buffer size by 1.
+        /// </summary>
+        public T PopFrontItem()
+        {
+            lock (_lock)
+            {
+                ThrowIfEmpty("Cannot take elements from an empty buffer.");
+                T item = _buffer[_start];
+                _buffer[_start] = default(T);
+                Increment(ref _start);
+                --_size;
+                return item;
+            }
+        }
         /// <summary>
         /// Clears the contents of the array. Size = 0, Capacity is unchanged.
         /// </summary>
         /// <exception cref="NotImplementedException"></exception>
         public void Clear()
         {
-            // to clear we just reset everything.
-            _start = 0;
-            _end = 0;
-            _size = 0;
-            Array.Clear(_buffer, 0, _buffer.Length);
+            lock (_lock)
+            {
+                // to clear we just reset everything.
+                _start = 0;
+                _end = 0;
+                _size = 0;
+                Array.Clear(_buffer, 0, _buffer.Length);
+            }
         }
 
         /// <summary>
@@ -271,15 +319,18 @@ namespace CircularBuffer
         /// <returns>A new array with a copy of the buffer contents.</returns>
         public T[] ToArray()
         {
-            T[] newArray = new T[Size];
-            int newArrayOffset = 0;
-            var segments = ToArraySegments();
-            foreach (ArraySegment<T> segment in segments)
+            lock (_lock)
             {
-                Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
-                newArrayOffset += segment.Count;
+                T[] newArray = new T[Size];
+                int newArrayOffset = 0;
+                var segments = ToArraySegments();
+                foreach (ArraySegment<T> segment in segments)
+                {
+                    Array.Copy(segment.Array, segment.Offset, newArray, newArrayOffset, segment.Count);
+                    newArrayOffset += segment.Count;
+                }
+                return newArray;
             }
-            return newArray;
         }
 
         /// <summary>
@@ -296,7 +347,7 @@ namespace CircularBuffer
         /// <returns>An IList with 2 segments corresponding to the buffer content.</returns>
         public IList<ArraySegment<T>> ToArraySegments()
         {
-            return new [] { ArrayOne(), ArrayTwo() };
+            return new[] { ArrayOne(), ArrayTwo() };
         }
 
         #region IEnumerable<T> implementation
