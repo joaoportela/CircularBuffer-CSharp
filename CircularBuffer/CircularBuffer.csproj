@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net5.0;net6.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0;net461</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/joaoportela/CircularBuffer-CSharp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -17,7 +17,7 @@
     <None Include="..\LICENSE" Pack="true" PackagePath="LICENSE" />
   </ItemGroup>
 
-  <ItemGroup> 
+  <ItemGroup>
     <None Include="..\doc\logo.png">
       <Pack>true</Pack>
       <Visible>false</Visible>
