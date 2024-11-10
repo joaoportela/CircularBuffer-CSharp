@@ -1,0 +1,55 @@
+﻿<Window x:Class="GameInputDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameInputDemo"
+        KeyDown="Window_KeyDown"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="AUTO"/>
+                    <ColumnDefinition  Width="AUTO"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <DockPanel Grid.Column="0" Grid.Row="0" LastChildFill="True">
+                    <Label Content="Buffer Size:" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                    <TextBox x:Name="BufferSizeTxt" Text="3" VerticalContentAlignment="Center"/>
+                </DockPanel>
+                <DockPanel Grid.Column="0" Grid.Row="1" LastChildFill="True">
+                    <Label Content="Update Time (ms):" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                    <TextBox x:Name="UpdateTimeTxt" Text="500" VerticalContentAlignment="Center"/>
+                </DockPanel>
+                <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+                    <Button x:Name="StartBtn" Content="Start" Width="80" Height="30" Click="StartBtn_Click"/>
+                    <Button x:Name="StopBtn" Content="Stop" Width="80" Height="30" Click="StopBtn_Click"/>
+                </StackPanel>
+            </Grid>
+            
+            <Label Content="You can use hot keys"/>
+            <Button x:Name="FireButton" Content="Fire (1)" Width="100" Height="100" Margin="10" Click="FireButton_Click"/>
+            <Button x:Name="Lightning" Content="Lightning (2)" Width="100" Height="100" Margin="10" Click="Lightning_Click"/>
+            <Button x:Name="EarthButton" Content="Earth (3)" Width="100" Height="100" Margin="10" Click="EarthButton_Click"/>
+        </StackPanel>
+        
+        <DockPanel Grid.Column="1" LastChildFill="True">
+            <Label Content="Buffer" DockPanel.Dock="Top"/>
+            <TextBox x:Name="BufferTextbox" TextWrapping="Wrap"/>
+        </DockPanel>
+        <DockPanel Grid.Column="2" LastChildFill="True">
+            <Label Content="Output" DockPanel.Dock="Top"/>
+            <TextBox x:Name="OutputTextBox" TextWrapping="Wrap"/>
+        </DockPanel>
+    </Grid>
+</Window>
